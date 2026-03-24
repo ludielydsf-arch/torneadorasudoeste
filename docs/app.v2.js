@@ -346,7 +346,7 @@ function authInit() {
     else { info.textContent = "Não autenticado"; btnLogin.classList.remove("hidden"); btnLogout.classList.add("hidden") }
   }
   update()
-  btnLogin.onclick = () => { document.getElementById("login-modal").classList.remove("hidden"); document.body.classList.add("modal-open") }
+  btnLogin.onclick = () => { document.getElementById("login-modal").classList.remove("hidden"); document.body.classList.add("modal-open"); setTimeout(()=>{const el=document.getElementById("auth-user"); if(el) el.focus()},0) }
   btnLogout.onclick = () => { localStorage.removeItem("currentUser"); update(); toast("Sessão encerrada") }
   document.getElementById("auth-cancel").onclick = () => { document.getElementById("login-modal").classList.add("hidden"); document.body.classList.remove("modal-open") }
   document.getElementById("auth-login").onclick = () => {
@@ -357,7 +357,7 @@ function authInit() {
     if (ok) { localStorage.setItem("currentUser", u); document.getElementById("login-modal").classList.add("hidden"); document.body.classList.remove("modal-open"); update(); toast("Autenticado") }
     else { toast("Credenciais inválidas") }
   }
-  document.getElementById("auth-signup-open").onclick = () => { document.getElementById("login-modal").classList.add("hidden"); document.getElementById("signup-modal").classList.remove("hidden") }
+  document.getElementById("auth-signup-open").onclick = () => { document.getElementById("login-modal").classList.add("hidden"); document.getElementById("signup-modal").classList.remove("hidden"); document.body.classList.add("modal-open"); setTimeout(()=>{const el=document.getElementById("signup-user"); if(el) el.focus()},0) }
   document.getElementById("signup-cancel").onclick = () => { document.getElementById("signup-modal").classList.add("hidden"); document.body.classList.remove("modal-open") }
   document.getElementById("signup-create").onclick = () => {
     const u = (document.getElementById("signup-user").value || "").trim()
@@ -373,8 +373,17 @@ function authInit() {
     document.getElementById("signup-modal").classList.add("hidden"); document.body.classList.remove("modal-open")
     update(); toast("Conta criada e sessão iniciada")
   }
+  document.addEventListener("keydown", (e)=>{
+    if(e.key==="Escape"){
+      const lm=document.getElementById("login-modal"); const sm=document.getElementById("signup-modal");
+      let closed=false
+      if(lm && !lm.classList.contains("hidden")){ lm.classList.add("hidden"); closed=true }
+      if(sm && !sm.classList.contains("hidden")){ sm.classList.add("hidden"); closed=true }
+      if(closed) document.body.classList.remove("modal-open")
+    }
+  })
 }
-function requireAuth(fn) { return () => { if (!isAuthenticated()) { document.getElementById("login-modal").classList.remove("hidden"); return } fn() } }
+function requireAuth(fn) { return () => { if (!isAuthenticated()) { document.getElementById("login-modal").classList.remove("hidden"); document.body.classList.add("modal-open"); setTimeout(()=>{const el=document.getElementById("auth-user"); if(el) el.focus()},0); return } fn() } }
 function bind() {
   document.getElementById("cl-salvar").addEventListener("click", requireAuth(addClient))
   document.getElementById("cl-limpar").addEventListener("click", clearClientForm)
