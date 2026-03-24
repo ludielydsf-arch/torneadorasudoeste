@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Client {
+  id              String   @id @default(cuid())
+  tipo            String
+  nomeCompleto    String?
+  cpf             String?  @unique
+  rg              String?
+  nomeEmpresa     String?
+  cnpj            String?  @unique
+  nomeResponsavel String?
+  telefone        String
+  email           String
+  endereco        String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  budgets         Budget[]
+}
+
+model Budget {
+  id                     String       @id @default(cuid())
+  numeroSequencial       Int
+  numeroSequencialChave  String
+  dataCriacao            DateTime     @default(now())
+  clientId               String
+  client                 Client       @relation(fields: [clientId], references: [id])
+  status                 String       @default("PENDENTE")
+  nfNumero               String?
+  pedidoCompraNumero     String?
+  totalGeral             Decimal      @default(0)
+  items                  BudgetItem[]
+  createdAt              DateTime     @default(now())
+  updatedAt              DateTime     @updatedAt
+  @@index([clientId, numeroSequencial])
+  @@unique([numeroSequencialChave])
+}
+
+model BudgetItem {
+  id         String   @id @default(cuid())
+  budgetId   String
+  budget     Budget   @relation(fields: [budgetId], references: [id])
+  descricao  String
+  quantidade Int
+  valorUnit  Decimal
+  valorTotal Decimal
+}
