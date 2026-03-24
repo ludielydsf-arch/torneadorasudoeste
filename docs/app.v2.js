@@ -312,13 +312,15 @@ function cfgBind() {
       state.budgets = data.budgets || []
       localStorage.setItem("users", JSON.stringify(data.users || []))
       if (data.logo) localStorage.setItem("logoDataUrl", data.logo)
+      const headerLogo = document.getElementById("site-logo")
+      if (data.logo && headerLogo) { headerLogo.src = data.logo; headerLogo.classList.remove("hidden") }
       save(); renderClients(); renderClientOptions(); renderBudgets(); dashboard(); toast("Backup importado")
     } catch { toast("Falha ao importar") }
   })
   document.getElementById("cfg-logo").addEventListener("change", async e => {
     const file = e.target.files[0]; if (!file) return
     const reader = new FileReader()
-    reader.onload = () => { localStorage.setItem("logoDataUrl", reader.result); toast("Logotipo salvo") }
+    reader.onload = () => { localStorage.setItem("logoDataUrl", reader.result); const img=document.getElementById("site-logo"); if(img){ img.src=reader.result; img.classList.remove("hidden") } toast("Logotipo salvo") }
     reader.readAsDataURL(file)
   })
   document.getElementById("cfg-signature").addEventListener("change", async e => {
@@ -393,5 +395,5 @@ function bind() {
   document.getElementById("bu-filtrar").addEventListener("click", renderBudgets)
   document.getElementById("bu-sort").addEventListener("change", renderBudgets)
 }
-function init() { load(); authInit(); mountTabs(); bind(); cfgBind(); dashboardBind(); renderClients(); renderClientOptions(); calcItemsTotal(); renderBudgets(); dashboard() }
+function init() { load(); authInit(); mountTabs(); bind(); cfgBind(); dashboardBind(); renderClients(); renderClientOptions(); calcItemsTotal(); renderBudgets(); dashboard(); const logo=localStorage.getItem("logoDataUrl"); const img=document.getElementById("site-logo"); if(logo&&img){ img.src=logo; img.classList.remove("hidden") } }
 document.addEventListener("DOMContentLoaded", init)
