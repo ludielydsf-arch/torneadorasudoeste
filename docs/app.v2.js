@@ -11,12 +11,13 @@ function save() {
   localStorage.setItem("budgets", JSON.stringify(state.budgets))
 }
 function fmt(n) { return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(n) }
+function isAuthenticated() { return !!localStorage.getItem("currentUser") }
 function tab(id) {
   document.querySelectorAll(".tab").forEach(e => e.classList.add("hidden"))
   document.getElementById(id).classList.remove("hidden")
   document.querySelectorAll(".tab-btn").forEach(b => { b.classList.toggle("active", b.dataset.tab === id) })
 }
-function mountTabs() { document.querySelectorAll(".tab-btn").forEach(b => b.addEventListener("click", () => tab(b.dataset.tab))) }
+function mountTabs() { document.querySelectorAll(".tab-btn").forEach(b => b.addEventListener("click", () => { if (!isAuthenticated() && b.dataset.tab !== "config") { document.getElementById("login-modal").classList.remove("hidden"); return } tab(b.dataset.tab) })) }
 function clearClientForm() { ["cl-nomeCompleto", "cl-cpf", "cl-rg", "cl-nomeEmpresa", "cl-cnpj", "cl-nomeResponsavel", "cl-telefone", "cl-email", "cl-endereco"].forEach(id => document.getElementById(id).value = "") }
 function readClientForm() {
   const tipo = document.getElementById("cl-tipo").value
@@ -332,13 +333,30 @@ function authInit() {
     if (ok) { localStorage.setItem("currentUser", u); document.getElementById("login-modal").classList.add("hidden"); update(); toast("Autenticado") }
     else { toast("Credenciais inválidas") }
   }
+  document.getElementById("auth-signup-open").onclick = () => { document.getElementById("login-modal").classList.add("hidden"); document.getElementById("signup-modal").classList.remove("hidden") }
+  document.getElementById("signup-cancel").onclick = () => { document.getElementById("signup-modal").classList.add("hidden") }
+  document.getElementById("signup-create").onclick = () => {
+    const u = document.getElementById("signup-user").value
+    const p = document.getElementById("signup-pass").value
+    const c = document.getElementById("signup-confirm").value
+    if (!u || !p || !c) { toast("Preencha usuário e senha"); return }
+    if (p !== c) { toast("Senhas não conferem"); return }
+    const users2 = JSON.parse(localStorage.getItem("users") || "[]")
+    if (users2.find(x => x.user === u)) { toast("Usuário já existe"); return }
+    users2.push({ id: uid(), user: u, pass: p, createdAt: new Date().toISOString() })
+    localStorage.setItem("users", JSON.stringify(users2))
+    localStorage.setItem("currentUser", u)
+    document.getElementById("signup-modal").classList.add("hidden")
+    update(); toast("Conta criada e sessão iniciada")
+  }
 }
+function requireAuth(fn) { return () => { if (!isAuthenticated()) { document.getElementById("login-modal").classList.remove("hidden"); return } fn() } }
 function bind() {
-  document.getElementById("cl-salvar").addEventListener("click", addClient)
+  document.getElementById("cl-salvar").addEventListener("click", requireAuth(addClient))
   document.getElementById("cl-limpar").addEventListener("click", clearClientForm)
   document.getElementById("cl-filtrar").addEventListener("click", renderClients)
-  document.getElementById("bu-add-item").addEventListener("click", addItemRow)
-  document.getElementById("bu-salvar").addEventListener("click", saveBudget)
+  document.getElementById("bu-add-item").addEventListener("click", requireAuth(addItemRow))
+  document.getElementById("bu-salvar").addEventListener("click", requireAuth(saveBudget))
   document.getElementById("bu-filtrar").addEventListener("click", renderBudgets)
   document.getElementById("bu-sort").addEventListener("change", renderBudgets)
 }
