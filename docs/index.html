@@ -196,9 +196,9 @@
 <div id="login-modal" class="modal hidden">
   <div class="modal-box">
     <h3>Entrar</h3>
-    <div class="form-grid">
-      <label>Usuário<input id="auth-user"></label>
-      <label>Senha<input type="password" id="auth-pass"></label>
+    <div class="form-stack">
+      <label>Usuário<input id="auth-user" autocomplete="username"></label>
+      <label>Senha<input type="password" id="auth-pass" autocomplete="current-password"></label>
     </div>
     <div class="actions">
       <button class="btn btn-secondary" id="auth-cancel">Cancelar</button>
@@ -210,10 +210,10 @@
 <div id="signup-modal" class="modal hidden">
   <div class="modal-box">
     <h3>Criar conta</h3>
-    <div class="form-grid">
-      <label>Usuário<input id="signup-user"></label>
-      <label>Senha<input type="password" id="signup-pass"></label>
-      <label>Confirmar senha<input type="password" id="signup-confirm"></label>
+    <div class="form-stack">
+      <label>Usuário<input id="signup-user" autocomplete="username"></label>
+      <label>Senha<input type="password" id="signup-pass" autocomplete="new-password"></label>
+      <label>Confirmar senha<input type="password" id="signup-confirm" autocomplete="new-password"></label>
     </div>
     <div class="actions">
       <button class="btn btn-secondary" id="signup-cancel">Cancelar</button>

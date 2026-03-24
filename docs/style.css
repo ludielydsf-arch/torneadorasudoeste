@@ -38,9 +38,12 @@ tbody tr:hover{background:rgba(255,255,255,.05)}
 footer{padding:16px 20px;color:var(--muted);text-align:center}
 /* Toast & Modal */
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:rgba(0,194,255,.15);color:#dff7ff;border:1px solid rgba(0,194,255,.35);padding:10px 14px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,.35)}
-.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5)}
-.modal-box{width:min(680px,92vw);background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;box-shadow:0 10px 40px rgba(0,0,0,.4)}
+.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.7);z-index:1000}
+.modal-box{width:min(520px,92vw);background:linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.form-stack{display:flex;flex-direction:column;gap:12px}
+.form-stack label{color:var(--muted);font-size:12px}
 .userbox{display:flex;align-items:center;gap:10px}
 .hidden{display:none}
+body.modal-open{overflow:hidden}
 @media (max-width:980px){.form-grid{grid-template-columns:1fr 1fr}.cards{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:640px){.form-grid{grid-template-columns:1fr}.cards{grid-template-columns:1fr}nav{flex-wrap:wrap}}

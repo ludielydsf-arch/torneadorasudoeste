@@ -346,19 +346,19 @@ function authInit() {
     else { info.textContent = "Não autenticado"; btnLogin.classList.remove("hidden"); btnLogout.classList.add("hidden") }
   }
   update()
-  btnLogin.onclick = () => { document.getElementById("login-modal").classList.remove("hidden") }
+  btnLogin.onclick = () => { document.getElementById("login-modal").classList.remove("hidden"); document.body.classList.add("modal-open") }
   btnLogout.onclick = () => { localStorage.removeItem("currentUser"); update(); toast("Sessão encerrada") }
-  document.getElementById("auth-cancel").onclick = () => { document.getElementById("login-modal").classList.add("hidden") }
+  document.getElementById("auth-cancel").onclick = () => { document.getElementById("login-modal").classList.add("hidden"); document.body.classList.remove("modal-open") }
   document.getElementById("auth-login").onclick = () => {
     const u = (document.getElementById("auth-user").value || "").trim()
     const p = (document.getElementById("auth-pass").value || "").trim()
     if (!u || !p) { toast("Informe usuário e senha"); return }
     const ok = JSON.parse(localStorage.getItem("users")).find(x => x.user === u && x.pass === p)
-    if (ok) { localStorage.setItem("currentUser", u); document.getElementById("login-modal").classList.add("hidden"); update(); toast("Autenticado") }
+    if (ok) { localStorage.setItem("currentUser", u); document.getElementById("login-modal").classList.add("hidden"); document.body.classList.remove("modal-open"); update(); toast("Autenticado") }
     else { toast("Credenciais inválidas") }
   }
   document.getElementById("auth-signup-open").onclick = () => { document.getElementById("login-modal").classList.add("hidden"); document.getElementById("signup-modal").classList.remove("hidden") }
-  document.getElementById("signup-cancel").onclick = () => { document.getElementById("signup-modal").classList.add("hidden") }
+  document.getElementById("signup-cancel").onclick = () => { document.getElementById("signup-modal").classList.add("hidden"); document.body.classList.remove("modal-open") }
   document.getElementById("signup-create").onclick = () => {
     const u = (document.getElementById("signup-user").value || "").trim()
     const p = (document.getElementById("signup-pass").value || "").trim()
@@ -370,7 +370,7 @@ function authInit() {
     users2.push({ id: uid(), user: u, pass: p, createdAt: new Date().toISOString() })
     localStorage.setItem("users", JSON.stringify(users2))
     localStorage.setItem("currentUser", u)
-    document.getElementById("signup-modal").classList.add("hidden")
+    document.getElementById("signup-modal").classList.add("hidden"); document.body.classList.remove("modal-open")
     update(); toast("Conta criada e sessão iniciada")
   }
 }
