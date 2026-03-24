@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Torneadora Sudoeste</title>
+<meta name="theme-color" content="#0b1020">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./style.css">
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+<header>
+<h1>Torneadora Sudoeste</h1>
+<nav>
+<button class="tab-btn active" data-tab="clientes">Clientes</button>
+<button class="tab-btn" data-tab="orcamentos">Orçamentos</button>
+<button class="tab-btn" data-tab="dashboard">Dashboard</button>
+</nav>
+</header>
+<main>
+<div class="container">
+<section id="clientes" class="tab panel">
+<h2>Clientes</h2>
+<div class="form-grid">
+<label>Tipo
+<select id="cl-tipo">
+<option value="PF">PF</option>
+<option value="PJ">PJ</option>
+</select>
+</label>
+<label>Nome completo
+<input id="cl-nomeCompleto">
+</label>
+<label>CPF
+<input id="cl-cpf">
+</label>
+<label>RG
+<input id="cl-rg">
+</label>
+<label>Nome da empresa
+<input id="cl-nomeEmpresa">
+</label>
+<label>CNPJ
+<input id="cl-cnpj">
+</label>
+<label>Responsável
+<input id="cl-nomeResponsavel">
+</label>
+<label>Telefone
+<input id="cl-telefone">
+</label>
+<label>Email
+<input id="cl-email">
+</label>
+<label>Endereço
+<input id="cl-endereco">
+</label>
+</div>
+<div class="actions">
+<button class="btn btn-primary" id="cl-salvar">Salvar</button>
+<button class="btn btn-secondary" id="cl-limpar">Limpar</button>
+</div>
+<div class="filters">
+<input id="cl-q" placeholder="Pesquisar nome/empresa">
+<input id="cl-fcpf" placeholder="CPF">
+<input id="cl-fcnpj" placeholder="CNPJ">
+<button class="btn btn-secondary" id="cl-filtrar">Filtrar</button>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Tipo</th><th>Identificação</th><th>Contato</th><th>Ações</th></tr></thead>
+<tbody id="cl-lista"></tbody>
+</table>
+</div>
+</section>
+<section id="orcamentos" class="tab panel hidden">
+<h2>Orçamentos</h2>
+<div class="form-grid">
+<label>Cliente
+<select id="bu-client"></select>
+</label>
+</div>
+<div>
+<div class="table-wrap">
+<table class="items">
+<thead><tr><th>Descrição</th><th>Quantidade</th><th>Valor unitário</th><th>Total</th><th></th></tr></thead>
+<tbody id="bu-items"></tbody>
+</table>
+</div>
+<button class="btn btn-secondary" id="bu-add-item">Adicionar item</button>
+</div>
+<div class="actions">
+<button class="btn btn-primary" id="bu-salvar">Salvar orçamento</button>
+<span id="bu-total"></span>
+</div>
+<div class="filters">
+<input id="bu-q" placeholder="Pesquisar nome/empresa">
+<input id="bu-fcpf" placeholder="CPF">
+<input id="bu-fcnpj" placeholder="CNPJ">
+<input id="bu-fdate" type="date">
+<input id="bu-fstart" type="date">
+<input id="bu-fend" type="date">
+<input id="bu-fmonth" type="number" min="1" max="12" placeholder="Mês">
+<input id="bu-fyear" type="number" min="1900" max="2100" placeholder="Ano">
+<select id="bu-fstatus">
+<option value="">Todos</option>
+<option value="PENDENTE">PENDENTE</option>
+<option value="APROVADO">APROVADO</option>
+<option value="REALIZADO">REALIZADO</option>
+</select>
+<button class="btn btn-secondary" id="bu-filtrar">Filtrar</button>
+</div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Número</th><th>Cliente</th><th>Data</th><th>Status</th><th>Total</th><th>Ações</th></tr></thead>
+<tbody id="bu-lista"></tbody>
+</table>
+</div>
+</section>
+<section id="dashboard" class="tab panel hidden">
+<h2>Dashboard</h2>
+<div class="filters">
+<select id="db-client"></select>
+<input id="db-start" type="date">
+<input id="db-end" type="date">
+<input id="db-month" type="number" min="1" max="12" placeholder="Mês">
+<input id="db-year" type="number" min="1900" max="2100" placeholder="Ano">
+<button class="btn btn-secondary" id="db-atualizar">Atualizar</button>
+</div>
+<div class="cards">
+<div class="card"><div>Total criados</div><strong id="m-criados">0</strong></div>
+<div class="card"><div>Total aprovados</div><strong id="m-aprovados">0</strong></div>
+<div class="card"><div>Total realizados</div><strong id="m-realizados">0</strong></div>
+<div class="card"><div>Soma realizados</div><strong id="m-soma">R$ 0,00</strong></div>
+</div>
+</section>
+</div>
+</main>
+<footer>
+<small>Local, sem backend. Dados armazenados no navegador.</small>
+</footer>
+<script src="./app.js"></script>
+</body>
+</html>
