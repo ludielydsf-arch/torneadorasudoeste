@@ -17,7 +17,7 @@ function tab(id) {
   document.getElementById(id).classList.remove("hidden")
   document.querySelectorAll(".tab-btn").forEach(b => { b.classList.toggle("active", b.dataset.tab === id) })
 }
-function mountTabs() { document.querySelectorAll(".tab-btn").forEach(b => b.addEventListener("click", () => { if (!isAuthenticated() && b.dataset.tab !== "config") { document.getElementById("login-modal").classList.remove("hidden"); return } tab(b.dataset.tab) })) }
+function mountTabs() { document.querySelectorAll(".tab-btn").forEach(b => b.addEventListener("click", () => { if (!isAuthenticated()) { document.getElementById("login-modal").classList.remove("hidden"); return } tab(b.dataset.tab) })) }
 function clearClientForm() { ["cl-nomeCompleto", "cl-cpf", "cl-rg", "cl-nomeEmpresa", "cl-cnpj", "cl-nomeResponsavel", "cl-telefone", "cl-email", "cl-endereco"].forEach(id => document.getElementById(id).value = "") }
 function readClientForm() {
   const tipo = document.getElementById("cl-tipo").value
@@ -221,6 +221,17 @@ function pdfBudget(id) {
   doc.text("Serviços", 40, y); y += 18
   b.items.forEach(i => { doc.text(`${i.descricao}`, 40, y); y += 16; doc.text(`Qtd: ${i.quantidade}  Valor unitário: ${fmt(i.valorUnit)}  Total: ${fmt(i.valorTotal)}`, 40, y); y += 16 })
   y += 18; doc.setFontSize(14); doc.text(`Total geral: ${fmt(b.totalGeral)}`, 420, y, { align: "right" })
+  const sigEnabled = localStorage.getItem("signatureEnabled") || "no"
+  const sig = localStorage.getItem("signatureDataUrl")
+  const sigName = localStorage.getItem("signatureName") || ""
+  if (sigEnabled === "yes" && sig) {
+    try {
+      doc.setFontSize(12)
+      doc.text("Assinatura:", 40, y + 40)
+      doc.addImage(sig, "PNG", 120, y + 10, 160, 60)
+      if (sigName) { doc.text(sigName, 120, y + 80) }
+    } catch {}
+  }
   doc.save(`orcamento-${b.numeroSequencial}.pdf`)
 }
 function dashboard() {
@@ -310,6 +321,18 @@ function cfgBind() {
     reader.onload = () => { localStorage.setItem("logoDataUrl", reader.result); toast("Logotipo salvo") }
     reader.readAsDataURL(file)
   })
+  document.getElementById("cfg-signature").addEventListener("change", async e => {
+    const file = e.target.files[0]; if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => { localStorage.setItem("signatureDataUrl", reader.result); toast("Assinatura salva") }
+    reader.readAsDataURL(file)
+  })
+  document.getElementById("cfg-signature-name").addEventListener("input", e => {
+    localStorage.setItem("signatureName", e.target.value || "")
+  })
+  document.getElementById("cfg-signature-enabled").addEventListener("change", e => {
+    localStorage.setItem("signatureEnabled", e.target.value)
+  })
 }
 function authInit() {
   const users = JSON.parse(localStorage.getItem("users") || "[]")
@@ -327,8 +350,9 @@ function authInit() {
   btnLogout.onclick = () => { localStorage.removeItem("currentUser"); update(); toast("Sessão encerrada") }
   document.getElementById("auth-cancel").onclick = () => { document.getElementById("login-modal").classList.add("hidden") }
   document.getElementById("auth-login").onclick = () => {
-    const u = document.getElementById("auth-user").value
-    const p = document.getElementById("auth-pass").value
+    const u = (document.getElementById("auth-user").value || "").trim()
+    const p = (document.getElementById("auth-pass").value || "").trim()
+    if (!u || !p) { toast("Informe usuário e senha"); return }
     const ok = JSON.parse(localStorage.getItem("users")).find(x => x.user === u && x.pass === p)
     if (ok) { localStorage.setItem("currentUser", u); document.getElementById("login-modal").classList.add("hidden"); update(); toast("Autenticado") }
     else { toast("Credenciais inválidas") }
@@ -336,9 +360,9 @@ function authInit() {
   document.getElementById("auth-signup-open").onclick = () => { document.getElementById("login-modal").classList.add("hidden"); document.getElementById("signup-modal").classList.remove("hidden") }
   document.getElementById("signup-cancel").onclick = () => { document.getElementById("signup-modal").classList.add("hidden") }
   document.getElementById("signup-create").onclick = () => {
-    const u = document.getElementById("signup-user").value
-    const p = document.getElementById("signup-pass").value
-    const c = document.getElementById("signup-confirm").value
+    const u = (document.getElementById("signup-user").value || "").trim()
+    const p = (document.getElementById("signup-pass").value || "").trim()
+    const c = (document.getElementById("signup-confirm").value || "").trim()
     if (!u || !p || !c) { toast("Preencha usuário e senha"); return }
     if (p !== c) { toast("Senhas não conferem"); return }
     const users2 = JSON.parse(localStorage.getItem("users") || "[]")
